@@ -220,12 +220,13 @@ def main(args=None):
     from xdg import BaseDirectory
 
     try:
-        config = {}
-        exec(compile(open(args[0]).read(), args[0], 'exec'), {}, config)
-        APP_KEY = config.get('APP_KEY')
-        APP_SECRET = config.get('APP_SECRET')
+        if args:
+            config = {}
+            exec(compile(open(args[0]).read(), args[0], 'exec'), {}, config)
+            APP_KEY = config.get('APP_KEY')
+            APP_SECRET = config.get('APP_SECRET')
     except:
-        log.exception("Could not read config file.")
+        log.error("Could not read config file.")
 
     if not APP_KEY or not APP_SECRET:
         sys.exit("You need to set your APP_KEY and APP_SECRET!")
