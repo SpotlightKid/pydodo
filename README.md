@@ -1,12 +1,10 @@
 PyDoDo
 ======
 
-
 Python client for todo list organization using todo.txt format
 
-
-This is currently pre-alpha code but the parser in `todotxt` module is already
-usable.
+This is currently pre-alpha code but the parser in the `todotxt` module is
+already usable.
 
 
 Author
