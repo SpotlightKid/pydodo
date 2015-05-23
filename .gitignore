@@ -1,0 +1,4 @@
+tests/app_key.txt
+__pycache__
+src/__pycache__
+
