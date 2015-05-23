@@ -1,0 +1,7 @@
+  (A) 2015-05-30 Plane to Mallorca #holiday
+  (A) Thank Mom for the meatballs @phone
+  (B) Schedule Goodwill pickup #GarageSale @phone
+      @GroceryStore Eskimo pies
+      Post signs around the neighborhood +GarageSale
+x (B) 2015-05-22 10:23 2015-05-22 Repair bike @weekend #bike #diy
+x     2015-05-23 Write todo.txt parser #programming PRIO:C
