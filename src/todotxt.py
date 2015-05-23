@@ -25,7 +25,7 @@ DATE_RE = re.compile(r'^(?P<date>\d{2}(\d{2})?-\d{1,2}-\d{1,2})'
                      r'([_T ](?P<time>\d{1,2}:\d{2}(:\d{2})?))?\s+', re.I)
 METADATA_RE = re.compile(r'(^|\s)(?P<key>\w+):(?P<value>\S+)')
 PRIORITY_RE = re.compile(r'^\((?P<priority>\w)\)\s+')
-TAG_RE  = re.compile(r'(^|\s)#(?P<tag>\w+)')
+TAG_RE  = re.compile(r'(^|\s)(#|\+)(?P<tag>\w+)')
 
 
 class TodoItem(object):
@@ -72,9 +72,9 @@ class TodoList(list):
 
         """
         with open(filename, encoding=encoding) as infile:
-            todotxt = cls()
-            todotxt.parse(infile)
-            return todotxt
+            todolist = cls()
+            todolist.parse(infile)
+            return todolist
 
     def parse(self, stream):
         """Parse input stream and set instance elements to list of TodoItems.
@@ -142,6 +142,14 @@ class TodoList(list):
                 item.metadata[key] = match.group('value')
 
             line = METADATA_RE.sub(collect, line).strip()
+
+            # get priority from metadata if present and not already set
+            if not item.priority and 'prio' in item.metadata:
+                item.priority = item.metadata['prio']
+
+            # get due date from metadata if present and not already set
+            if not item.due and 'due' in item.metadata:
+                item.priority = parsedate(item.metadata['due'])
 
             # The remainder of the line is the task text
             item.task = line
