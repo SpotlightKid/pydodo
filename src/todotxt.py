@@ -55,6 +55,8 @@ class TodoList(list):
 
     def __init__(self, *args, **kw):
         super(TodoList, self).__init__(*args, **kw)
+        self.tagchar = '#'
+        self.keep_priority = True
 
     def _xform_key(self, key):
         """Transform metadata key name.
@@ -175,7 +177,7 @@ class TodoList(list):
             if item.done:
                 line.append('x')
 
-            if item.priority:
+            if item.priority and (not item.done or self.keep_priority):
                 line.append('(%s)' % item.priority)
 
             if item.done and item.completed:
@@ -198,7 +200,8 @@ class TodoList(list):
                 line.append(" ".join('@%s' % ctx for ctx in item.contexts))
 
             if item.tags:
-                line.append(" ".join('#%s' % tag for tag in item.tags))
+                line.append(" ".join('%s%s' % (self.tagchar, tag)
+                                     for tag in item.tags))
 
             if item.metadata:
                 line.append(" ".join('%s:%s' % (k, v)
@@ -223,11 +226,12 @@ class TodoList(list):
 
 def main(args=None):
     """Main program entry point."""
-    t = TodoList.fromfile(args[0])
+    t = TodoList.fromfile(args.pop(0) if args else 'todo.txt')
     for ti in t:
         print(ti)
 
-    t.writefile('out.txt')
+    if args:
+        t.writefile(args[0])
 
 
 if __name__ == '__main__':
