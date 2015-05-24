@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+"""A library to parse and write todo.txt files.
 
 Example `todo.txt` file structure:
 
-    (A) 2015-05-30 Flieger nach Sardinien #urlaub
+    (A) 2015-05-30 Plane to Mallorca #holiday #private
+    (B) Install new printer @office #sysadmin
+    x Do tax declaration @office #bookkeeping due:2015-03-30
 
 """
 
@@ -12,6 +14,8 @@ from __future__ import print_function, unicode_literals
 
 import re
 import sys
+
+from datetime import date, datetime, time
 
 if str == bytes:
     import io
@@ -68,7 +72,7 @@ class TodoList(list):
         @param filename: input file name/path (default: 'todo.txt')
         @param encoding: input file encoding (default: 'utf-8')
 
-        @return TodoTxt: new TodoTxt instance
+        @return TodoList: new TodoList instance
 
         """
         with open(filename, encoding=encoding) as infile:
@@ -155,12 +159,73 @@ class TodoList(list):
             item.task = line
             self.append(item)
 
+    def write(self, stream, encoding='utf-8'):
+        """Write todo list in todo.txt format to a stream.
+
+        @param stream: file-like object to write output to
+        @param encoding: output encoding (default: 'utf-8')
+
+        @return None
+
+        """
+        for item in self:
+            line = []
+
+            if item.done:
+                line.append('x')
+
+            if item.priority:
+                line.append('(%s)' % item.priority)
+
+            if item.done and item.completed:
+                if (isinstance(item.completed, date) or
+                        item.completed.time() == time(0)):
+                    fmt = '%Y-%m-%d'
+                else:
+                    fmt = '%Y-%m-%d %H:%M'
+                line.append(item.completed.strftime(fmt))
+
+            if item.due:
+                if isinstance(item.due, date) or item.due.time() == time(0):
+                    fmt = '%Y-%m-%d'
+                else:
+                    fmt = '%Y-%m-%d %H:%M'
+                line.append(item.due.strftime(fmt))
+
+            line.append(item.task.strip())
+            if item.contexts:
+                line.append(" ".join('@%s' % ctx for ctx in item.contexts))
+
+            if item.tags:
+                line.append(" ".join('#%s' % tag for tag in item.tags))
+
+            if item.metadata:
+                line.append(" ".join('%s:%s' % (k, v)
+                                     for k, v in item.metadata.items()))
+
+            line = " ".join(line) + '\n'
+            stream.write(line.encode(encoding))
+
+    def writefile(self, filename, encoding='utf-8'):
+        """Write todo list to file with given filename.
+
+        @param filename: output filename
+        @param encoding: output encoding (default: 'utf-8')
+
+        @return None
+
+        """
+        with open(filename, 'wb') as outfile:
+            self.write(outfile, encoding)
+
 
 def main(args=None):
     """Main program entry point."""
-    t = TodoList.fromfile('todo.txt')
+    t = TodoList.fromfile(args[0])
     for ti in t:
         print(ti)
+
+    t.writefile('out.txt')
 
 
 if __name__ == '__main__':
