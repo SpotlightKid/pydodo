@@ -159,16 +159,17 @@ class TodoList(list):
             item.task = line
             self.append(item)
 
-    def write(self, stream, encoding='utf-8'):
+    def write(self, stream, encoding='utf-8', sortkey=None):
         """Write todo list in todo.txt format to a stream.
 
         @param stream: file-like object to write output to
         @param encoding: output encoding (default: 'utf-8')
+        @param sortkey: sorting key function (default: None)
 
         @return None
 
         """
-        for item in self:
+        for item in sorted(self, key=sortkey) if sortkey else self:
             line = []
 
             if item.done:
@@ -206,17 +207,18 @@ class TodoList(list):
             line = " ".join(line) + '\n'
             stream.write(line.encode(encoding))
 
-    def writefile(self, filename, encoding='utf-8'):
+    def writefile(self, filename, encoding='utf-8', sortkey=None):
         """Write todo list to file with given filename.
 
         @param filename: output filename
         @param encoding: output encoding (default: 'utf-8')
+        @param sortkey: sorting key function (default: None)
 
         @return None
 
         """
         with open(filename, 'wb') as outfile:
-            self.write(outfile, encoding)
+            self.write(outfile, encoding, sortkey)
 
 
 def main(args=None):
