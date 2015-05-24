@@ -5,7 +5,7 @@
 """Python client for todo list organization using todo.txt format.
 
 This is currently pre-alpha code but the parser in the `todotxt` module is
-already able parse `todo.txt`_ files.
+already able to parse `todo.txt`_ files.
 
 .. _todo.txt: https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format
 
